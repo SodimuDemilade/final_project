@@ -1,0 +1,105 @@
+WindowManager:
+    FirstWindow:
+    SecondWindow:
+    ThirdWindow:
+
+
+<FirstWindow>:
+    name: "first"
+
+    GridLayout:
+        cols: 1
+        size_hint: (0.6, 0.7)
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+        Label:
+            id: username
+            text: "Enter your moodle username:"
+            font_size: 18
+            color: '#00FFCE'
+
+        TextInput:
+            id: username_input
+            multiline: False
+            padding_y: (10, 10)
+            size_hint: (1, 0.5)
+
+        Label:
+            id: password
+            text: "Enter your moodle password:"
+            font_size: 18
+            color: '#00FFCE'
+
+        TextInput:
+            id: password_input
+            multiline: False
+            padding_y: (10, 10)
+            size_hint: (1, 0.5)
+
+        Button:
+            id: button1
+            text: "SAVE"
+            size_hint: (1, 0.5)
+            bold: True
+            background_color: '#00FFCE'
+            on_press: root.callback()
+
+        Button:
+            text: "Next Screen"
+            size_hint: (1, 0.5)
+            bold: True
+            background_color: '#00FFCE'
+            on_release:
+                app.root.current = "second"
+                root.manager.transition.direction = "left"
+
+
+<SecondWindow>:
+    name: "second"
+
+    GridLayout:
+        cols: 1
+        size_hint: (0.6, 0.7)
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+        Label:
+            id: welcome
+            text: "Hello, Welcome to bla bla bla"
+            font_size: 18
+            color: '#00FFCE'
+
+        Button:
+            text: "Upload note"
+            size_hint: (1, 0.5)
+            bold: True
+            background_color: '#00FFCE'
+
+        Button:
+            text: "Input Keyword"
+            size_hint: (1, 0.5)
+            bold: True
+            background_color: '#00FFCE'
+            on_release:
+                app.root.current = "third"
+                root.manager.transition.direction = "left"
+
+
+<ThirdWindow>:
+    name: "third"
+
+    GridLayout:
+        cols: 1
+        size_hint: (0.6, 0.7)
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+        Label:
+            id: keyword
+            text: "Enter the keyword to be searched:"
+            font_size: 18
+            color: '#00FFCE'
+
+        TextInput:
+            id: keyword_input
+            multiline: True
+            padding_y: (10, 10)
+            size_hint: (1, 0.5)

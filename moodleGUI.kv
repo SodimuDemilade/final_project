@@ -1,0 +1,144 @@
+WindowManager:
+    TestWindow:
+    MainWindow:
+    FirstWindow:
+    SecondWindow:
+    KeywordWindow:
+    NoteWindow:
+
+
+<MainWindow>:
+    FloatLayout:
+        Label:
+            id: welcome
+            size_hint : 0.8, 0.2
+            pos_hint : {"x" : 0.14, "top" : 0.7}
+            text : "WELCOME TO BLA BLA BLA"
+        Button:
+            text : "SAVE MOODLE DETAILS"
+            bold: True
+            background_color: '#00FFCE'
+            size_hint : 0.4, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.55}
+            on_release:
+                app.root.current = 'first'
+                root.manager.transition.direction = "left"
+        Button:
+            text : "START APP"
+            bold: True
+            background_color: '#00FFCE'
+            size_hint : 0.4, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.4}
+            on_release:
+                root.main()
+        Button:
+            text : "CLOSE"
+            bold: True
+            background_color: '#00FFCE'
+            size_hint : 0.4, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.25}
+            on_release:
+                root.close()
+
+<FirstWindow>:
+    username: username
+    password: password
+    FloatLayout:
+        size: root.width, root.height
+        background_color: '#5f6b62'
+        Label:
+            font_size: 18
+            text: "Enter your moodle username:"
+            size_hint : 0.2, 0.1
+            pos_hint : {"x":0.25, "top":0.9}
+            color: '#00FFCE'
+
+        TextInput:
+            id: username
+            multiline: False
+            size_hint : 0.35, 0.08
+            pos_hint : {"x" : 0.53, "top" : 0.9}
+
+        Label:
+            font_size: 18
+            text: "Enter your moodle password:"
+            size_hint : 0.2, 0.1
+            pos_hint : {"x" : 0.25, "top" : 0.7}
+            color: '#00FFCE'
+
+        TextInput:
+            id: password
+            multiline: False
+            size_hint : 0.35, 0.08
+            pos_hint : {"x" : 0.53, "top" : 0.7}
+
+        Button:
+            text: "SAVE"
+            size_hint : 0.4, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.4}
+            bold: True
+            background_color: '#00FFCE'
+            on_release:
+                root.callback()
+                app.root.current = "second"
+                root.manager.transition.direction = "left"
+        Button:
+            text: "CLOSE"
+            size_hint : 0.4, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.2}
+            bold: True
+            background_color: '#00FFCE'
+            on_release:
+                root.close()
+
+
+
+<SecondWindow>:
+    info: info
+    GridLayout:
+        cols: 1
+        size_hint: (0.6, 0.7)
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        Label:
+            id: info
+            size_hint : 0.8, 0.2
+            font_size: 18
+            color: '#00FFCE'
+            text: "SUCCCESFULLY SAVED LOGIN DETAILS"
+        Button:
+            text: "Start App"
+            size_hint : 0.4, 0.1
+            bold: True
+            background_color: '#00FFCE'
+            on_release:
+                root.main()
+        Button:
+            text: "CLOSE"
+            size_hint : 0.4, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.1}
+            bold: True
+            background_color: '#00FFCE'
+            on_release:
+                root.close()
+
+
+<KeywordWindow>
+    FloatLayout:
+        Label:
+            text: "Please Enter the Keyword to be Searched"
+            id: keyword
+            size_hint : 0.8, 0.2
+            pos_hint : {"x" : 0.15, "top" : 0.8}
+            font_size: 18
+            color: '#00FFCE'
+        TextInput:
+            id: username
+            multiline: False
+            size_hint : 0.45, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.6}
+        Button:
+            text: "SEARCH"
+            size_hint : 0.45, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.4}
+            bold: True
+            background_color: '#00FFCE'

@@ -1,76 +1,137 @@
-import pandas as pd
-import re
-from tqdm import tqdm
-from ecommercetools import seo
-import time
+from tkinter import *
+import tkinter.simpledialog
+import tkinter.messagebox
+import PyPDF2
+import os
+import comtypes.client
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import time
-#
-# # query_list = ['denmark, inflation', 'denmark, immigration', 'denmark, global warming', 'toronto, inflation',
-# #               'toronto, immigration', 'toronto global warming', 'washington, inflation',
-# #               'washington, immigration', 'washington, global warming', 'madrid, inflation', 'madrid immigration',
-# #               'madrid, global warming', 'paris, inflation', 'paris, immigration', 'paris, global warming',
-# #               'sweden, inflation', 'sweden, immigration', 'sweden, global warming']
-#
-# query_list = ['machine learning', 'Distributed systems', 'Computer Security', 'artificial intelligence',
-#               'recommender systems', 'global warming sweden', 'intelligent agents', 'percepts sequence']
-# # query_list = ['artificial intelligence pdf']
-#
-# targets = []
-# for query in tqdm(query_list):
-#     pages_num = 3
-#     # conditions = ['wikipedia', 'twitter', 'linkedin', 'Facebook', 'news']
-#     conditions = ['youtube', 'pdf', 'wikipedia']
-#     # conditions = ['']
-#     #use [''] to get all google search results
-#     try:
-#         res = seo.get_serps(query, pages=pages_num)
-#     except:
-#         continue
-#     for c in conditions:
-#         temp1 = res[res['link'].str.contains(c, case=False)]['title'].to_list()
-#         temp2 = res[res['link'].str.contains(c, case=False)]['link'].to_list()
-#         if len(temp1) == 0:
-#             y = ''
-#         else:
-#             y = temp1[0]
-#         if len(temp2) == 0:
-#             z = ''
-#         else:
-#             z = temp2[0]
-#         targets.append([y, z, c, query])
-#         time.sleep(25)
-#     time.sleep(20)
-#
-# targets = pd.DataFrame(targets, columns=['title', 'link', 'link category', 'query keyword used'])
-# print(targets)
-
-
+from py_youtube import Data
 from googlesearch import search
-
-query = "artificial intelligence pdf"
-
-for i in search(query, tld="com", num=10, stop=10, pause=2):
-    print(i)
+from moodle_project.extract_keywords import get_keyword
 
 
+# FUNCTION TO COVERT PPTX TO pdf
+def ppt_to_pdf(inputfilename, outputfilename, formattype=32):
+    powerpoint = comtypes.client.CreateObject("Powerpoint.Application")
+    powerpoint.Visible = 1
 
-# options = Options()
-# # options.add_argument("--headless")
-# options.add_experimental_option('prefs', {
-#     "download.default_directory": "C:\\Users\\Demilade Sodimu\\Desktop",
-#     "download.prompt_for_download": False,  # To auto download the file
-#     "download.directory_upgrade": True,
-#     "plugins.always_open_pdf_externally": True  # It will not show PDF directly in chrome
-# })
-# chrome_driver_path = "C:\Development\chromedriver.exe"
-# service = Service(chrome_driver_path)
-# driver = webdriver.Chrome(service=service, options=options)
-#
-# # links will be put here for download
-# driver.get("https://www.dcpehvpm.org/E-Content/BCA/BCA-III/artificial_intelligence_tutorial.pdf")
-# time.sleep(1500)
+    if outputfilename[-3:] != 'pdf':
+        outputfilename = outputfilename + ".pdf"
+    deck = powerpoint.Presentations.Open(inputfilename)
+    # formatType = 32 for ppt to pdf
+    deck.SaveAs(outputfilename, formattype)
+    deck.Close()
+    powerpoint.Quit()
+    return outputfilename
 
-# have to figure out how to rank videos
+
+# THIS IS T DOWNLOAD PDFS
+def download_pdfs(pdf_links):
+    path = "C:\\Users\\Demilade Sodimu\\Documents\\notes_resources"
+    if not os.path.exists(path):
+        os.makedirs("C:\\Users\\Demilade Sodimu\\Documents\\notes_resources")
+    options = Options()
+    # options.add_argument("--headless")
+    options.add_experimental_option('prefs', {
+        "download.default_directory": "C:\\Users\\Demilade Sodimu\\Documents\\notes_resources",
+        "download.prompt_for_download": False,  # To auto download the file
+        "download.directory_upgrade": True,
+        "plugins.always_open_pdf_externally": True  # It will not show PDF directly in chrome
+    })
+    chrome_driver_path = "C:\\Development\\chromedriver.exe"
+    service = Service(chrome_driver_path)
+    driver = webdriver.Chrome(service=service, options=options)
+
+    # links will be put here for download
+    for link in pdf_links:
+        file_extension = os.path.splitext(link)[1]
+        file_extension = file_extension.lstrip(".")
+        if file_extension == "pdf":
+            try:
+                driver.get(link)
+            except:
+                continue
+            time.sleep(40)
+        else:
+            continue
+
+
+# THIS IS FOR YOUTUBE VIDEOS
+def myvideos(video_links):
+    views_list = []
+    for link in video_links:
+        try:
+            data = Data(link).data()
+            my_dict = {'title': data['title'], 'link': link, 'views': int(data['views'])}
+            views_list.append(my_dict)
+        except:
+            continue
+    sorted_views = sorted(views_list, key=lambda x: x["views"], reverse=True)
+    return sorted_views
+
+
+# THIS IS TO EXTRACT KEYWORD FROM FILES
+def get_resources(file_path):
+    # CHECK THE FILE EXTENSION
+    output_pdf_file_path = os.path.splitext(file_path)[0] + ".pptx"
+    file_extension = os.path.splitext(file_path)[1]
+    file_extension = file_extension.lstrip(".")
+    if file_extension != "pdf":
+        output_file = ppt_to_pdf(file_path, output_pdf_file_path)
+        actual_file = output_file
+    else:
+        actual_file = file_path
+
+    # CONVERT PDF TO TEXT
+    mytext = ''
+    reader = PyPDF2.PdfReader(actual_file)
+    for page_num in range(len(reader.pages)):
+        page = reader.pages[page_num]
+        text = page.extract_text()
+        mytext += text
+    # GET KEYWORD
+    keyword = get_keyword(mytext)
+    pdf_query = keyword + " pdf"
+    video_query = keyword + " video"
+    pdf_links = []
+    video_links = []
+    for i in search(pdf_query, tld="com", num=5, stop=5, pause=2):
+        print(i)
+        pdf_links.append(i)
+    for j in search(video_query, tld="com", num=5, stop=5, pause=2):
+        print(j)
+        video_links.append(j)
+    download_pdfs(pdf_links)
+    video_dictionary = myvideos(video_links)
+    return video_dictionary
+
+
+class CustomDialog(tkinter.simpledialog.Dialog):
+    def __init__(self, parent, title=None, text=None):
+        self.data = text
+        tkinter.simpledialog.Dialog.__init__(self, parent, title=title)
+
+    def body(self, parent):
+        self.text = tkinter.Text(self, width=80, height=30)
+        self.text.pack(fill="both", expand=True)
+        self.text.insert("1.0", self.data)
+        self.text.config(state=DISABLED)
+        return self.text
+
+
+def resources_popup(file):
+    something = get_resources(file)
+    print(something)
+    root = Tk()
+    root.title("Main Window")
+    root.withdraw()
+    message = ""
+    for i in something:
+        message += "Video Title: " + i['title'] + "\n"
+        message += "Video Link: " + i['link'] + "\n"
+        message += "Number of views: " + str(i['views']) + "\n" + "\n"
+    CustomDialog(root, title='Youtube Recommendations', text=message)
+

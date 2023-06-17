@@ -1,0 +1,151 @@
+#:kivy 1.11.1
+<JobListScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_y: 0.1
+        pos_hint: {"top":1}
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex("#6633FF")
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [0, 0, 30, 30]
+    BoxLayout:
+        orientation: "vertical"
+
+        BoxLayout:
+            orientation: "vertical"
+            BoxLayout:
+                size_hint_y: 0.1
+                orientation: "horizontal"
+                BoxLayout:
+                    orientation: "horizontal"
+                    MDIconButton:
+                        icon: 'close'
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        on_release:
+                            app.manage_screens(root.name, "remove")
+                            app.change_screen("home_screen")
+                    MDLabel:
+                        text: "Transport"
+                        font_style: "H5"
+                        bold: True
+                        theme_text_color: 'Custom'
+                        valign: "center"
+                        halign: "center"
+                        text_color: (1, 1, 1, 1) if app.theme_cls.theme_style == "Dark" else (0, 0, 0, 1)
+                MDIconButton:
+                    icon: "filter-outline"
+                    pos_hint: {"center_y": 0.5}
+
+            RecycleView:
+                id: rv
+                viewclass: 'JobListCard'
+                key_size: 'height'
+                data: app.job_list
+                RecycleBoxLayout:
+                    padding: dp(10)
+                    spacing: dp(10)
+                    default_size: None, dp(48)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+
+
+<JobListCard>:
+    orientation: 'vertical'
+    size_hint: (0.8, 0.4)
+    job_title: "Taxi Driver"
+    sub_title: "Sedan taxi driver"
+    location: "Windhoek"
+    due_date: "15/02/2015"
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_y: 0.4
+        BoxLayout:
+            orientation: "horizontal"
+            MDLabel:
+                font_style: "H5"
+                text: root.job_title
+                theme_text_color: "Custom" if app.theme_cls.theme_style == "Dark" else "Primary"
+                text_color: (1, 1, 1, 1) if app.theme_cls.theme_style == "Dark" else (0, 0, 0, 1)
+                size_hint_y: None
+                text_size: self.width, None
+                height: self.texture_size[1]
+                valign: "center"
+                halign: "center"
+            MDIconButton:
+                icon: 'heart-outline'
+                theme_text_color: "Primary"
+                on_release: root.toggle_heart(self)
+        # other
+        MDLabel:
+            font_style: "H6"
+            text: root.sub_title
+            valign: "middle"
+            halign: "center"
+            theme_text_color: 'Custom'
+            text_color: (1, 1, 1, 1) if app.theme_cls.theme_style == "Dark" else (0, 0, 0, 1)
+            size_hint_y: None
+            text_size: self.width, None
+            height: self.texture_size[1]
+    BoxLayout:
+        size_hint_y: 0.1
+        MDSeparator:
+    BoxLayout:
+        size_hint_y: 0.3
+
+        BoxLayout:
+            orientation: "horizontal"
+            BoxLayout:
+                orientation: "horizontal"
+                MDIconButton:
+                    icon: 'map-marker'
+                    pos_hint: {"center_y": 0.5}
+                    on_release: print("press")
+                MDLabel:
+                    text: root.location
+                    font_style: "Subtitle2"
+                    valign: "bottom"
+                    halign: "left"
+                    pos_hint: {"center_y": 0.5}
+                    theme_text_color: 'Custom'
+                    text_color: (1, 1, 1, 1) if app.theme_cls.theme_style == "Dark" else (0, 0, 0, 1)
+            BoxLayout:
+                orientation: "horizontal"
+                MDIconButton:
+                    icon: 'timelapse'
+                    pos_hint: {"center_y": 0.5}
+                MDLabel:
+                    text: root.due_date
+                    font_style: "Subtitle2"
+                    valign: "middle"
+                    halign: "left"
+                    pos_hint: {"center_y": 0.5}
+                    theme_text_color: 'Custom'
+                    text_color: (1, 1, 1, 1) if app.theme_cls.theme_style == "Dark" else (0, 0, 0, 1)
+
+            MDRaisedButton:
+                text: 'View'
+                pos_hint: {"center_y": 0.5}
+                on_release: root.view_job(root)
+
+
+
+# class MainApp(MDApp):
+#     job_list = ListProperty()
+#     def __init__(self, **kwargs):
+#         self.title = "KivyMD Examples - Bottom Navigation"
+#         super().__init__(**kwargs)
+
+#     def build(self):
+#         self.root = Builder.load_string(root_kv)
+
+#     def ss(self):
+#         self.job_list.append({"height": dp(150)})
+
+
+# if __name__ == "__main__":
+#     MainApp().run()

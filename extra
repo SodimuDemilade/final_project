@@ -1,0 +1,30 @@
+pos_hint: {"x" : 0.13, "top" : 0.8}
+pos_hint: {"x" : 0.33, "top" : 0.55}
+pos_hint: {"x": 0.33, "top": 0.4}
+pos_hint: {"x": 0.33, "top": 0.25}
+
+
+<MainWindow>:
+    FloatLayout:
+        Label:
+            id: welcome
+            size_hint : 0.8, 0.2
+            pos_hint : {"x" : 0.14, "top" : 0.7}
+            text : "WELCOME TO BLA BLA BLA"
+        Button:
+            text : "SAVE MOODLE DETAILS"
+            bold: True
+            background_color: '#00FFCE'
+            size_hint : 0.4, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.55}
+            on_release:
+                app.root.current = 'first'
+                root.manager.transition.direction = "left"
+        Button:
+            text : "CLOSE"
+            bold: True
+            background_color: '#00FFCE'
+            size_hint : 0.4, 0.1
+            pos_hint : {"x" : 0.33, "top" : 0.4}
+            on_release:
+                root.close()
