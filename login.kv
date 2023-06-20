@@ -1,4 +1,41 @@
 #:kivy 1.11.1
+#:import Factory kivy.factory.Factory
+<MyUPopup@Popup>
+    auto_dismiss: False
+    size_hint: 0.6, 0.2
+    pos_hint: {"x": 0.2, "top": 0.9}
+    title: "Changed username and password"
+    BoxLayout:
+        MDLabel:
+            text: "You have successfully changed the username and password"
+        MDRectangleFlatButton:
+            text: "Close Me!"
+            font_size: 15
+            on_release: root.dismiss()
+<MyPPopup@Popup>
+    auto_dismiss: False
+    size_hint: 0.6, 0.2
+    pos_hint: {"x": 0.2, "top": 0.9}
+    title: "Changed No of PDF Downloads"
+    BoxLayout:
+        MDLabel:
+            text: "You have successfully changed the number of PDF downloads per note"
+        MDRectangleFlatButton:
+            text: "Close Me!"
+            font_size: 15
+            on_release: root.dismiss()
+<MyVPopup@Popup>
+    auto_dismiss: False
+    size_hint: 0.6, 0.2
+    pos_hint: {"x": 0.2, "top": 0.9}
+    title: "Changed No of Video Recommendations"
+    BoxLayout:
+        MDLabel:
+            text: "You have successfully changed the number of video recommendations per note"
+        MDRectangleFlatButton:
+            text: "Close Me!"
+            font_size: 15
+            on_release: root.dismiss()
 <LoginScreen@Screen>:
     name: "login_screen"
     on_enter:
@@ -16,7 +53,7 @@
             padding: [15, 0, 15, 0]
             orientation: "vertical"
             MDLabel:
-                text: "PUT NAME HERE"
+                text: "SpiderNet"
                 text_size: self.size
                 font_size: 35
                 bold: True
@@ -24,7 +61,7 @@
                 valign: 'middle'
 
             MDLabel:
-                text: "WELCOME TO BLA BLA BLA: Automating your learning"
+                text: "WELCOME TO SpiderNet: Automating your learning"
                 halign: "center"
                 valign: "middle"
                 bold: True
@@ -36,7 +73,6 @@
                 bold: False
                 color: utils.get_color_from_hex("#006233")
 
-
         BoxLayout:
             orientation: "vertical"
             MDFillRoundFlatButton:
@@ -45,18 +81,31 @@
                 size_hint_x: 0.8
                 pos_hint: {"center_x": .5}
                 on_release:
-                    app.main()
+                    app.add_to_reg()
             MDRectangleFlatButton:
                 text: "Save Details Here"
                 pos_hint: {"center_x": .5}
+                size_hint_x: 0.5
                 on_release:
                     app.manage_screens("registration_screen", "add")
                     app.change_screen("registration_screen")
             MDRectangleFlatButton:
-                text: "PopUp"
+                text: "Settings"
                 pos_hint: {"center_x": .5}
+                size_hint_x: 0.5
                 on_release:
-                    Factory.MyPopup().open()
+                    app.manage_screens("settings_screen", "add")
+                    app.change_screen("settings_screen")
+            MDRectangleFlatButton:
+                text: "Close"
+                pos_hint: {"center_x": .5}
+                size_hint_x: 0.5
+                on_release:
+                    app.close()
+            MDRectangleFlatButton:
+                text: "Quit App"
+                pos_hint: {"center_x": .5}
+                size_hint_x: 0.5
 
 <RegistrationScreen@Screen>:
     name: "registration_screen"
@@ -72,7 +121,7 @@
             BoxLayout:
                 orientation: "vertical"
                 Label:
-                    text: "[color=000000]PUT NAME HERE[/color]"
+                    text: "[color=000000]SpiderNet[/color]"
                     markup: True
                     text_size: self.size
                     font_size: 35
@@ -99,6 +148,13 @@
                 size_hint_x: 0.8
                 pos_hint: {"center_x": 0.5}
                 password: True
+            MDTextField:
+                id: courses
+                hint_text: "Enter your courses separated by a comma (,) ONLY"
+                helper_text: "courses"
+                size_hint_x: 0.8
+                pos_hint: {"center_x": 0.5}
+                multiline: True
             BoxLayout:
                 orientation: "vertical"
                 MDFillRoundFlatButton:
@@ -106,10 +162,10 @@
                     size_hint_x: 0.8
                     pos_hint: {"center_x": .5}
                     on_release:
-                        app.callback(username.text, password.text)
+                        app.save_details(username.text, password.text, courses.text)
                         app.change_screen("login_screen")
                 MDRectangleFlatButton:
-                    text: "Already have an account?"
+                    text: "Already saved?"
                     pos_hint: {"x": .2, "y": 0.1}
                     on_release:
                         app.change_screen("login_screen")
@@ -157,42 +213,91 @@
                     Ellipse:
                         pos: self.pos
 
-<HomeScreen>:
-    MDToolbar:
-        id: toolbar
-        title: "Test MDBottomNavigation"
-        md_bg_color: app.theme_cls.primary_color
-        left_action_items: [["menu", lambda x: None]]
+<SettingsScreen@Screen>:
+    name: "settings_screen"
+    BoxLayout:
+        orientation: "vertical"
 
-    MDBottomNavigation:
-        id: panel
+        MDLabel:
+            text: "Change Username and Password"
+            halign: "center"
+            valign: "middle"
+            bold: True
+            color: utils.get_color_from_hex("#006233")
+        MDTextField:
+            id: username
+            hint_text: "Username"
+            helper_text: "Username"
+            size_hint_x: 0.8
+            pos_hint: {"center_x": 0.5}
+            password: False
+        MDTextField:
+            id: password
+            hint_text: "Password"
+            helper_text: "Password"
+            size_hint_x: 0.8
+            pos_hint: {"center_x": 0.5}
+            password: True
+        MDRectangleFlatButton:
+            text: "Change"
+            pos_hint: {"center_x": .5}
+            on_release:
+                app.change_details(username.text, password.text)
+                Factory.MyUPopup().open()
 
-        MDBottomNavigationItem:
-            name: "home"
-            text: "Home"
-            icon: "home-variant"
-
-            CategoryList:
-                id: cat_list
-
-        MDBottomNavigationItem:
-            name: "search"
-            text: "Search"
-            icon: "magnify"
-
-            MDLabel:
-                font_style: "Body1"
-                theme_text_color: "Primary"
-                text: "Search screen over here"
-                halign: "center"
-
-        MDBottomNavigationItem:
-            name: "profile"
-            text: "Profile"
-            icon: "account"
-
-            MDLabel:
-                font_style: "Body1"
-                theme_text_color: "Primary"
-                text: "Profile screen over here"
-                halign: "center"
+        MDLabel:
+            text: ""
+            halign: "center"
+            valign: "middle"
+            bold: True
+            color: utils.get_color_from_hex("#006233")
+        MDLabel:
+            text: "Change Number of video and pdf resources per note"
+            halign: "center"
+            valign: "middle"
+            bold: True
+            color: utils.get_color_from_hex("#006233")
+        MDTextField:
+            id: pdfs
+            hint_text: "No of PDF downloads"
+            helper_text: "No of PDF downloads"
+            size_hint_x: 0.8
+            pos_hint: {"center_x": 0.5}
+            password: False
+        MDRectangleFlatButton:
+            text: "Change"
+            pos_hint: {"center_x": .5}
+            on_release:
+                app.change_no_of_pdfs(pdfs.text)
+                Factory.MyPPopup().open()
+        MDTextField:
+            id: downloads
+            hint_text: "No of video recommendations"
+            helper_text: "No of video recommendations"
+            size_hint_x: 0.8
+            pos_hint: {"center_x": 0.5}
+            password: False
+        MDRectangleFlatButton:
+            text: "Change"
+            pos_hint: {"center_x": .5}
+            on_release:
+                app.change_no_of_videos(downloads.text)
+                Factory.MyVPopup().open()
+        MDLabel:
+            text: ""
+            halign: "center"
+            valign: "middle"
+            bold: True
+            color: utils.get_color_from_hex("#006233")
+        MDRectangleFlatButton:
+            text: "Go Back to Home"
+            pos_hint: {"center_x": .5}
+            on_release:
+                app.manage_screens("login_screen", "add")
+                app.change_screen("login_screen")
+        MDLabel:
+            text: ""
+            halign: "center"
+            valign: "middle"
+            bold: True
+            color: utils.get_color_from_hex("#006233")

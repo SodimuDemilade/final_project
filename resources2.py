@@ -75,6 +75,12 @@ def myvideos(video_links):
 
 # THIS IS TO EXTRACT KEYWORD FROM FILES
 def get_resources(file_path):
+    # GET NO OF RESOURCES
+    file1 = open("myfile.txt", "r")
+    fhand = file1.readlines()
+    pdf_num = int((fhand[2]).rstrip())
+    video_num = int((fhand[3]).rstrip())
+
     # CHECK THE FILE EXTENSION
     output_pdf_file_path = os.path.splitext(file_path)[0] + ".pptx"
     file_extension = os.path.splitext(file_path)[1]
@@ -98,10 +104,10 @@ def get_resources(file_path):
     video_query = keyword + " video"
     pdf_links = []
     video_links = []
-    for i in search(pdf_query, tld="com", num=5, stop=5, pause=2):
+    for i in search(pdf_query, tld="com", num=pdf_num, stop=pdf_num, pause=2):
         print(i)
         pdf_links.append(i)
-    for j in search(video_query, tld="com", num=5, stop=5, pause=2):
+    for j in search(video_query, tld="com", num=video_num, stop=video_num, pause=2):
         print(j)
         video_links.append(j)
     download_pdfs(pdf_links)
@@ -124,7 +130,7 @@ class CustomDialog(tkinter.simpledialog.Dialog):
 
 def resources_popup(file):
     something = get_resources(file)
-    print(something)
+    # print(something)
     root = Tk()
     root.title("Main Window")
     root.withdraw()
@@ -134,4 +140,5 @@ def resources_popup(file):
         message += "Video Link: " + i['link'] + "\n"
         message += "Number of views: " + str(i['views']) + "\n" + "\n"
     CustomDialog(root, title='Youtube Recommendations', text=message)
+
 

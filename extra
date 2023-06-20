@@ -28,3 +28,43 @@ pos_hint: {"x": 0.33, "top": 0.25}
             pos_hint : {"x" : 0.33, "top" : 0.4}
             on_release:
                 root.close()
+
+
+MDTopAppBar:
+        id: toolbar
+        title: "Test MDBottomNavigation"
+        md_bg_color: app.theme_cls.primary_color
+        left_action_items: [["menu", lambda x: None]]
+
+    MDBottomNavigation:
+        id: panel
+
+        MDBottomNavigationItem:
+            name: "home"
+            text: "Home"
+            icon: "home-variant"
+
+            CategoryList:
+                id: cat_list
+
+        MDBottomNavigationItem:
+            name: "settings_screen"
+            text: "Settings"
+            icon: "magnify"
+
+            MDLabel:
+                font_style: "Body1"
+                theme_text_color: "Primary"
+                text: "Search screen over here"
+                halign: "center"
+
+        MDBottomNavigationItem:
+            name: "profile"
+            text: "Profile"
+            icon: "account"
+
+            MDLabel:
+                font_style: "Body1"
+                theme_text_color: "Primary"
+                text: "Profile screen over here"
+                halign: "center"

@@ -9,10 +9,6 @@ from kivy.properties import ObjectProperty
 from kivy.core.window import Window
 
 
-class TestWindow(Screen):
-    pass
-
-
 class MainWindow(Screen):
     def main(self):
         image = Image.open("download.png")
@@ -77,7 +73,6 @@ class WindowManager(ScreenManager):
 kv = Builder.load_file('moodleGUI.kv')
 sm = WindowManager()
 
-sm.add_widget(TestWindow(name='test'))
 sm.add_widget(MainWindow(name='main'))
 sm.add_widget(FirstWindow(name='first'))
 sm.add_widget(SecondWindow(name='second'))
