@@ -1,18 +1,20 @@
 import traceback
-# import pystray
-# from moodle_project.resources2 import *
-# from moodle_project.startapp import start_app, exit_action
-# from pystray import MenuItem as Item
-# from PIL import Image
+import pystray
+from moodle_project.actual_project.resources2 import *
+from moodle_project.actual_project.startapp import start_app, exit_action
+from pystray import MenuItem as Item
+from PIL import Image
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.factory import Factory
 from kivy.animation import Animation
-from kivy.metrics import dp
+# from kivy.metrics import dp
 from kivymd.app import MDApp
-import winreg as reg
+# import winreg as reg
 import os
+from tkinter import *
+from tkinter import messagebox
 
 Window.softinput_mode = "below_target"  # resize to accommodate keyboard
 Window.keyboard_anim_args = {'d': 0.5, 't': 'in_out_quart'}
@@ -21,23 +23,9 @@ Builder.load_string("""
 #:import utils kivy.utils
 
 #:include login.kv
-#:include category.kv
-#:include home.kv
-#:include job_list.kv
 
 """)
 
-
-# class HomeScreen(Screen):
-#     def __init__(self, **kwargs):
-#         super().__init__(**kwargs)
-#
-#     def on_enter(self):
-#         MDApp.get_running_app().category_list.append({"height": dp(150)})
-#         MDApp.get_running_app().category_list.append({"height": dp(150)})
-#         MDApp.get_running_app().category_list.append({"height": dp(150)})
-#         MDApp.get_running_app().category_list.append({"height": dp(150)})
-#         MDApp.get_running_app().category_list.append({"height": dp(150)})
 
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
@@ -67,9 +55,16 @@ class Emp(MDApp):
         file1.write("\n")
         courses_list = courses.split(',')
         for course in courses_list:
-            path = "C:\\Users\\Demilade Sodimu\\Documents\\my_notes\\" + course
+            documents_directory = os.path.expanduser("~/Documents")
+            path = os.path.join(documents_directory, "my_notes\\courses", course)
+            new_path = os.path.join(documents_directory, "my_notes\\NEW", course)
+            resources_path = os.path.join(documents_directory, "my_notes\\notes_resources", course)
             if not os.path.exists(path):
                 os.mkdir(path)
+            if not os.path.exists(new_path):
+                os.mkdir(new_path)
+            if not os.path.exists(resources_path):
+                os.mkdir(resources_path)
 
     def change_details(self, username, password):
         file1 = open("myfile.txt", "r+")
@@ -93,32 +88,27 @@ class Emp(MDApp):
         with open('myfile.txt', 'w') as file:
             file.writelines(fhand)
 
-    # def main(self):
-    #     image = Image.open("download.png")
-    #     menu = (Item('Start App', start_app), Item('Exit', exit_action))
-    #     icon = pystray.Icon("name", icon=image, menu=menu)
-    #     icon.run()
+    def main(self):
+        file_path = 'C:\\Users\\Demilade Sodimu\\PycharmProjects\\scrapy_tutorial\\moodle_project\\myfile.txt'
+        if os.path.getsize(file_path) == 0:
+            root = Tk()
+            root.title("Main Window")
+            root.withdraw()
+            messagebox.showerror('Error', 'Please save details first')
+        image = Image.open("download.png")
+        menu = (Item('Start App', start_app), Item('Exit', exit_action))
+        icon = pystray.Icon("name", icon=image, menu=menu)
+        icon.run()
 
-    def add_to_reg(self):
-        key = reg.OpenKey(reg.HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Run", 0,
-                          reg.KEY_ALL_ACCESS)
-        reg.SetValueEx(key, "Moodle_Crawler", 0, reg.REG_SZ, "C:\\Users\\Demilade Sodimu\\PycharmProjects\\scrapy_tutorial\\moodle_project\\moodle.py")
-        reg.CloseKey(key)
+    # def add_to_reg(self):
+    #     key = reg.OpenKey(reg.HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Run", 0,
+    #                       reg.KEY_ALL_ACCESS)
+    #     reg.SetValueEx(key, "Moodle_Crawler", 0, reg.REG_SZ, "C:\\Users\\Demilade Sodimu\\PycharmProjects\\scrapy_tutorial\\moodle_project\\moodle.py")
+    #     reg.CloseKey(key)
 
     def close(self):
         MDApp.get_running_app().stop()
         Window.close()
-
-    # def account_action(self, email, password, username=None, action=None):
-    #     print(email, password, username, action)
-    #     if action == "register":
-    #         pass
-    #         # register the user
-    #     elif action == "login":
-    #         # login the user
-    #         pass
-    #     self.manage_screens("home_screen", "add")
-    #     self.change_screen("home_screen")
 
     def animate_background(self, widget):
         if not self.has_animated_background:
@@ -148,9 +138,7 @@ class Emp(MDApp):
         scns = {
             "login_screen": Factory.LoginScreen,
             "registration_screen": Factory.RegistrationScreen,
-            # "home_screen": Factory.HomeScreen,
             "settings_screen": Factory.SettingsScreen
-            # "job_list_screen": Factory.JobListScreen
         }
         try:
 
@@ -178,8 +166,6 @@ class Emp(MDApp):
     def build(self):
         self.bind(on_start=self.post_build_init)
         self.sm.add_widget(Factory.LoginScreen())
-        # self.sm.add_widget(HomeScreen(name="home_screen"))
-        # self.sm.current = "login_screen"
         return self.sm
 
     def post_build_init(self, ev):

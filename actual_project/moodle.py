@@ -1,5 +1,6 @@
-from moodle_project.resources2 import resources_popup
+from moodle_project.actual_project.resources2 import resources_popup
 from selenium import webdriver
+from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEventListener
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -7,13 +8,29 @@ import time
 import os
 import shutil
 
-path = "C:\\Users\\Demilade Sodimu\\Documents\\my_notes"
+my_file = ''
+
+
+class CustomEventListener(AbstractEventListener):
+    def on_download(self, event):
+        my_file = event.file_name
+        print(my_file)
+
+
+documents_directory = os.path.expanduser("~/Documents")
+path = os.path.join(documents_directory, "my_notes\\courses")
+new_path = os.path.join(documents_directory, "my_notes\\NEW")
+resources_path = os.path.join(documents_directory, "my_notes\\notes_resources")
 if not os.path.exists(path):
     os.makedirs(path)
+if not os.path.exists(new_path):
+    os.makedirs(new_path)
+# list_sub_folders = [f.path for f in os.scandir(new_path) if f.is_dir()]
+
 options = Options()
 # options.add_argument("--headless")
 options.add_experimental_option('prefs', {
-    "download.default_directory": "C:\\Users\\Demilade Sodimu\\Documents\\my_notes",
+    "download.default_directory": new_path,
     # To auto download the file
     "download.prompt_for_download": False,
     "download.directory_upgrade": True,
@@ -23,6 +40,8 @@ options.add_experimental_option('prefs', {
 chrome_driver_path = "C:\\Development\\chromedriver.exe"
 service = Service(chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=options)
+event_listener = CustomEventListener()
+event_firing_driver = EventFiringWebDriver(driver, event_listener)
 
 # DETAILS
 file1 = open("myfile.txt", "r")
@@ -50,38 +69,55 @@ courses = [course.text for course in courses_info]
 
 dashboard = 'https://moodle.cu.edu.ng/my/'
 count = 0
+course_group = []
 for _ in range(len(courses)):
+    # THIS IS BECAUSE I ENROLLED FOR CIS421 ALSO
     if _ != 0:
         driver.implicitly_wait(100)
         course = driver.find_element(By.PARTIAL_LINK_TEXT, courses[_][0:9])
         course.click()
+        no_of_files = 0
         try:
             links = driver.find_elements(By.CSS_SELECTOR, ".modtype_resource div div div div a")
             for i in range(len(links)):
                 exists = "false"
+
+                # file = links[i].get_attribute('href')
                 myfile = (driver.find_elements(By.CSS_SELECTOR, ".modtype_resource div div div div a")[i]).text
                 file_text = (myfile.split("\n"))[0]
-                files = os.listdir("C:\\Users\\Demilade Sodimu\\Documents\\my_notes")
+                files = os.listdir(path)
                 for file in files:
                     file_name = os.path.splitext(file)[0]
                     if file_text == file_name:
                         exists = "true"
-                        continue
+                        break
                 if exists == "false":
                     (driver.find_elements(By.CSS_SELECTOR, ".modtype_resource div div div div a")[i]).click()
+                    no_of_files += 1
         except:
             continue
+        course_group.append(no_of_files)
         driver.get(dashboard)
     count += 1
 
-# path = "C:\\Users\\Demilade Sodimu\\Documents\\my_notes"
-#                     list_sub_folders = [f.path for f in os.scandir(path) if f.is_dir()]
-#                     destination_path = list_sub_folders[count]
-#                     shutil.move(os.path.join(path, file_text), destination_path)
+# TO GROUP THE NOTES INTO THEIR COURSES_FOLDERS
+list_sub_folders = [f.path for f in os.scandir(path) if f.is_dir()]
+new_sub_folders = [f.path for f in os.scandir(new_path) if f.is_dir()]
+counter = 0
+source_path = os.path.join(documents_directory, "my_notes\\NEW")
+# list_files = [f.path for f in os.scandir(source_path) if f.is_file()]
+files = [f for f in os.listdir(source_path) if os.path.isfile(os.path.join(source_path, f))]
+sorted_files = sorted(files, key=lambda x: os.path.getmtime(os.path.join(source_path, x)))
+# source_dir = os.listdir("C:\\Users\\Demilade Sodimu\\Documents\\my_notes\\NEW")
+for i in range(len(course_group)):
+    destination_path = list_sub_folders[i]
+    for j in range(course_group[i]):
+        shutil.move(os.path.join(source_path, sorted_files[counter]), destination_path)
+        counter += 1
 
-# files = os.listdir("C:\\Users\\Demilade Sodimu\\Documents\\my_notes")
-# for note in files:
-#     resources_popup("C:\\Users\\Demilade Sodimu\\Documents\\my_notes\\" + note)
+# THIS IS TO RUN THE RESOURCES FUNCTION AND POPUP
+# resources_popup()
+
 
 
 
