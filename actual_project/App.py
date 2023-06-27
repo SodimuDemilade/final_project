@@ -1,7 +1,7 @@
 import traceback
 import pystray
-from moodle_project.actual_project.resources2 import *
-from moodle_project.actual_project.startapp import start_app, exit_action
+from moodle_project.actual_project.resources import *
+from moodle_project.actual_project.run_app import start_app, exit_action
 from pystray import MenuItem as Item
 from PIL import Image
 from kivy.core.window import Window
@@ -49,22 +49,31 @@ class Emp(MDApp):
         file1.write("\n")
         file1.write(password)
         file1.write("\n")
-        file1.write("5")
+        file1.write("3")
         file1.write("\n")
-        file1.write("5")
+        file1.write("3")
         file1.write("\n")
+        documents_directory = os.path.expanduser("~\\Documents")
+        path = os.path.join(documents_directory, "my_notes\\courses")
+        new_path = os.path.join(documents_directory, "my_notes\\NEW")
+        resources_path = os.path.join(documents_directory, "my_notes\\notes_resources")
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if not os.path.exists(new_path):
+            os.makedirs(new_path)
+        if not os.path.exists(new_path):
+            os.makedirs(resources_path)
         courses_list = courses.split(',')
         for course in courses_list:
-            documents_directory = os.path.expanduser("~/Documents")
-            path = os.path.join(documents_directory, "my_notes\\courses", course)
-            new_path = os.path.join(documents_directory, "my_notes\\NEW", course)
-            resources_path = os.path.join(documents_directory, "my_notes\\notes_resources", course)
-            if not os.path.exists(path):
-                os.mkdir(path)
-            if not os.path.exists(new_path):
-                os.mkdir(new_path)
-            if not os.path.exists(resources_path):
-                os.mkdir(resources_path)
+            courses_path = os.path.join(documents_directory, "my_notes\\courses", course)
+            courses_new_path = os.path.join(documents_directory, "my_notes\\NEW", course)
+            courses_resources_path = os.path.join(documents_directory, "my_notes\\notes_resources", course)
+            if not os.path.exists(courses_path):
+                os.mkdir(courses_path)
+            if not os.path.exists(courses_new_path):
+                os.mkdir(courses_new_path)
+            if not os.path.exists(courses_resources_path):
+                os.mkdir(courses_resources_path)
 
     def change_details(self, username, password):
         file1 = open("myfile.txt", "r+")

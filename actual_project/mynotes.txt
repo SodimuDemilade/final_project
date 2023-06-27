@@ -1,0 +1,55 @@
+Lecture 1 - Security Concepts and Principles
+Lecture 2 -Cryptographic Building Blocks
+Lecture 3 - User Authentication—Passwords, Biometrics and Alternatives
+Lecture 4 - Malicious Software
+Lecture 5 - Operating System Security and Access Control
+Lecture 6 - Web and Browser Security
+CSC423 COURSE COMPACT
+Chapter 1 slides
+Chapter 3 slides
+Chapter 4 slides
+Chapter 5 slides
+Chapter 6 slides
+Lecture 1
+Lecture 2
+IEEE 802 Standards and their versions
+How Protocols Work
+Extra Reading - OSI RM
+IP Addressing Part1
+IP Addressing Part2_Revised
+Lecture 5 - Network Components and Models
+Lecture 6 - Transmission Media
+Lecture 7 - Inetrconnecting Devices
+Modulation Demodulation and Multiplexing_Part1
+Modulation Demodulation and Multiplexing_Part 2
+Error Control
+Satellite communication and Network
+CSC425_Course compact
+Introduction and Overview of Computer Architecture
+Overview of High Performance computer
+Overview of High performance Computers_2
+Characteristics of memory
+Memory Address/Structure
+HARDWIRED AND MICROPROGRAMMED CONTROL
+SUMMARY SLIDES ON HARDWIRED AND MICROPROGRAMMED CONTROL
+SYNCHRONOUS AND ASYNCHRONOUS CONTROL
+Course Compact
+Lecture 1
+Lecture 2
+ADDITIONAL TUTORIAL QUESTIONS
+CSC446 TUTORIAL QUESTIONS
+CSC446 COURSE COMPACT OMEGA 2021-2022
+Module1 - Lecture 1 Slides
+Module 1 Lecture 2 Slides
+Module 2 Lecture 1 Slides
+Module 2 Lecture 2 Slides
+Module 2 Lecture 3 Slides
+Module 3 Slides - Lecture 1
+Group Presentations - Week 1
+DLD221 Introduction
+DLD 221_Leadership and the Challenge of Corruption_Prof Williams
+DLD221-Dynamic Leadership-VC
+TMC421 Introduction
+TMC421_The Christian Marriage
+TMC 421 Effective Communication in Marriage I
+TMC 421 Effective Communication in Marriage II

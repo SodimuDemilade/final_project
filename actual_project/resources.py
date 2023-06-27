@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import ttk
 import tkinter.simpledialog
 import tkinter.messagebox
 import PyPDF2
@@ -11,8 +10,9 @@ from selenium.webdriver.chrome.options import Options
 import time
 from py_youtube import Data
 from googlesearch import search
-from moodle_project.extract_keywords import get_keyword
+from moodle_project.actual_project.extract_keywords import get_keyword
 import shutil
+import win32com.client as win32
 
 
 # FUNCTION TO COVERT PPTX TO pdf
@@ -32,8 +32,8 @@ def ppt_to_pdf(inputfilename, outputfilename, formattype=32):
 
 # THIS IS T DOWNLOAD PDFS
 def download_pdfs(pdf_links):
-    documents_directory = os.path.expanduser("~/Documents")
-    resources_path = os.path.join(documents_directory, "my_notes\\NEW")
+    documents_directory = os.path.expanduser("~\\Documents")
+    resources_path = os.path.join(documents_directory, "my_notes\\notes_resources")
     if not os.path.exists(resources_path):
         os.makedirs(resources_path)
     options = Options()
@@ -57,7 +57,7 @@ def download_pdfs(pdf_links):
                 driver.get(link)
             except:
                 continue
-            time.sleep(40)
+            time.sleep(20)
         else:
             continue
 
@@ -87,12 +87,19 @@ def get_resources(file_path):
     # CHECK THE FILE EXTENSION
     file_extension = os.path.splitext(file_path)[1]
     file_extension = file_extension.lstrip(".")
-    if file_extension != "pdf":
+    if file_extension == "pdf":
+        actual_file = file_path
+    elif file_extension == "docx" or file_extension == "doc":
+        word = win32.gencache.EnsureDispatch('Word.Application')
+        output_pdf_file_path = os.path.splitext(file_path)[0] + ".pdf"
+        doc = word.Documents.Open(file_path)
+        doc.SaveAs(output_pdf_file_path, FileFormat=win32.constants.wdFormatPDF)
+        doc.Close()
+        actual_file = output_pdf_file_path
+    else:
         output_pdf_file_path = os.path.splitext(file_path)[0] + ".pdf"
         output_file = ppt_to_pdf(file_path, output_pdf_file_path)
         actual_file = output_file
-    else:
-        actual_file = file_path
 
     # CONVERT PDF TO TEXT
     mytext = ''
@@ -103,16 +110,16 @@ def get_resources(file_path):
         mytext += text
     # GET KEYWORD
     keyword = get_keyword(mytext)
-    # print(keyword)
+    print(keyword)
     pdf_query = keyword + " pdf"
     video_query = keyword + " video"
     pdf_links = []
     video_links = []
     for i in search(pdf_query, tld="com", num=pdf_num, stop=pdf_num, pause=2):
-        # print(i)
+        print(i)
         pdf_links.append(i)
     for j in search(video_query, tld="com", num=video_num, stop=video_num, pause=2):
-        # print(j)
+        print(j)
         video_links.append(j)
     download_pdfs(pdf_links)
     video_dictionary = myvideos(video_links)
@@ -135,18 +142,19 @@ class CustomDialog(tkinter.simpledialog.Dialog):
 def resources_popup():
     non_resources = ["DLD", "TMC", "EDS"]
     count = 0
-    documents_directory = os.path.expanduser("~/Documents")
+    documents_directory = os.path.expanduser("~\\Documents")
     path = os.path.join(documents_directory, "my_notes\\courses")
     new_path = os.path.join(documents_directory, "my_notes\\NEW")
     resources_path = os.path.join(documents_directory, "my_notes\\notes_resources")
+    resources_folder = [f.path for f in os.scandir(resources_path) if f.is_file()]
     sub_folders = [f.path for f in os.scandir(path) if f.is_dir()]
     new_sub_folders = [f.path for f in os.scandir(new_path) if f.is_dir()]
     resources_sub_folders = [f.path for f in os.scandir(resources_path) if f.is_dir()]
     for folder in new_sub_folders:
         folder_split = folder.split("\\")
-        if folder_split[5][0:3] in non_resources:
+        if folder_split[6][0:3] in non_resources:
             continue
-        message = "Course Title: " + folder_split[5] + "\n" + "Check 'Documents\\notes_resources' for downloaded pdf " \
+        message = "Course Title: " + folder_split[6] + "\n" + "Check 'Documents\\notes_resources' for downloaded pdf " \
                                                               "resources\n\n"
         the_folder = [f.path for f in os.scandir(folder) if f.is_file()]
         for file in the_folder:
@@ -158,11 +166,15 @@ def resources_popup():
                 message += "Number of views: " + str(i['views']) + "\n" + "\n"
             destination_path = sub_folders[count]
             shutil.move(os.path.join(new_path, file), destination_path)
-            for resource in resources_path:
+            for resource in resources_folder:
                 destination_path = resources_sub_folders[count]
                 shutil.move(os.path.join(resources_path, resource), destination_path)
+            # time.sleep()
         count += 1
         root = Tk()
         root.title("Main Window")
         root.withdraw()
         CustomDialog(root, title='Youtube Recommendations', text=message)
+
+
+# resources_popup()
